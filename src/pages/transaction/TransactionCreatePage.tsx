@@ -32,15 +32,17 @@ function TransactionCreatePage() {
         title: 'Success',
         description: response?.message,
       });
+      setLoading(false);
+
       navigate(ROUTE_TRANSACTION);
     } catch (error) {
+      setLoading(false);
+
       toast({
         variant: 'destructive',
         title: 'Error',
         description: parseErrorMessage(error),
       });
-    } finally {
-      setLoading(false);
     }
   };
 

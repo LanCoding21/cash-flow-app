@@ -20,13 +20,13 @@ import useWrapInvalidToken from '@/utils/hooks/useWrapInvalidToken';
 function SummarizeDailyTransactionChart() {
   const [transactions, setTransactions] =
     useState<DailySummarizeTransaction[]>();
-  const [dateStart, setDateStart] = useState(() => {
+  const [dateStart, setDateStart] = useState<Date | undefined>(() => {
     const date = new Date();
     date.setDate(date.getDate() - 30);
     return date;
   });
 
-  const [dateEnd, setDateEnd] = useState(() => {
+  const [dateEnd, setDateEnd] = useState<Date | undefined>(() => {
     return new Date();
   });
 
@@ -78,18 +78,20 @@ function SummarizeDailyTransactionChart() {
 
   const data = useMemo(() => {
     const dateTransactions = dates.map((date) => {
-      const incomeTransactions: DailySummarizeTransaction = (transactions ?? [])
+      const incomeTransactions: number = (transactions ?? [])
         .filter((t: DailySummarizeTransaction) => {
           return t.date.slice(0, 10) === date.toISOString().slice(0, 10);
         })
-        .filter((t: DailySummarizeTransaction) => t.type === 'INCOME')[0];
+        .filter((t: DailySummarizeTransaction) => t.type === 'INCOME')
+        .reduce((a, b) => a + b.amount, 0);
 
-      const expenseTransaction: DailySummarizeTransaction = (transactions ?? [])
+      const expenseTransaction: number = (transactions ?? [])
         .filter(
           (t: DailySummarizeTransaction) =>
             t.date.slice(0, 10) === date.toISOString().slice(0, 10),
         )
-        .filter((t: DailySummarizeTransaction) => t.type === 'EXPENSE')[0];
+        .filter((t: DailySummarizeTransaction) => t.type === 'EXPENSE')
+        .reduce((a, b) => a + b.amount, 0);
 
       return {
         name: dateFormat(
@@ -101,8 +103,8 @@ function SummarizeDailyTransactionChart() {
           },
           'en-UK',
         ),
-        income: incomeTransactions?.amount ?? 0,
-        expense: expenseTransaction?.amount ?? 0,
+        income: incomeTransactions ?? 0,
+        expense: expenseTransaction ?? 0,
       };
     });
 

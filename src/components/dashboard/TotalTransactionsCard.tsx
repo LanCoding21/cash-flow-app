@@ -124,7 +124,7 @@ function TotalTransactionsCard() {
           />
         </div>
 
-        <div className="flex">
+        <div className="flex flex-col md:flex-row">
           <ResponsiveContainer height={300}>
             <PieChart title="TEST">
               <text

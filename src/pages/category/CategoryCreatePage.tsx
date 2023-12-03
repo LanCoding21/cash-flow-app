@@ -25,15 +25,16 @@ function CategoryCreatePage() {
         title: 'Success',
         description: response?.message,
       });
+      setLoading(false);
       navigate(ROUTE_CATEGORY);
     } catch (error) {
+      setLoading(false);
+
       toast({
         title: 'Error',
         description: parseErrorMessage(error),
         variant: 'destructive',
       });
-    } finally {
-      setLoading(false);
     }
   };
   return (

@@ -69,6 +69,8 @@ export default function DataTable<TData, TValue>({
   useEffect(() => {
     let active = true;
 
+    let y: NodeJS.Timeout | null = null;
+
     const x = setTimeout(async () => {
       setLoading(true);
       try {
@@ -99,13 +101,18 @@ export default function DataTable<TData, TValue>({
       } catch (error) {
         console.log(error);
       } finally {
-        setLoading(false);
+        y = setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     }, 1000);
 
     return () => {
       active = false;
       clearTimeout(x);
+      if (y) {
+        clearTimeout(y);
+      }
     };
   }, [
     pageData.limit,
@@ -209,7 +216,7 @@ export default function DataTable<TData, TValue>({
                   className="h-24 text-center"
                 >
                   <div className="flex justify-center items-center gap-4">
-                    <ReloadIcon /> Loading...
+                    <ReloadIcon className="animate-spin" /> Loading...
                   </div>
                 </TableCell>
               </TableRow>
