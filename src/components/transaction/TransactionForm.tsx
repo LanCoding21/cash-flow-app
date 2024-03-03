@@ -183,7 +183,7 @@ function TransactionForm(props: ITransactionFormProps) {
         <TextField
           label="Receipt"
           type="file"
-          accept="image/*"
+          accept="image/*,application/pdf"
           onChange={(e) => {
             const val = (e.target.files ?? []).length
               ? e.target.files![0]

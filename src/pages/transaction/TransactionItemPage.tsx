@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { ROUTE_TRANSACTION } from '@/config/routes';
+import { isImage } from '@/lib/file-utils';
 import TransactionService from '@/service/transaction_service';
 import { Transaction } from '@/service/types/transaction_type';
 import { parseErrorMessage } from '@/utils/api';
@@ -133,6 +134,23 @@ function TransactionItemPage() {
                   label: 'Receipt',
                   display: (val) => {
                     if (!val) return 'No receipt attached';
+
+                    const isImg = isImage(val);
+
+                    if (!isImg) {
+                      return (
+                        <button
+                          onClick={() => {
+                            window.open(
+                              `${import.meta.env.VITE_API_URL}/${val}`,
+                            );
+                          }}
+                          className="hover:underline"
+                        >
+                          See Attachment
+                        </button>
+                      );
+                    }
 
                     return (
                       <img
