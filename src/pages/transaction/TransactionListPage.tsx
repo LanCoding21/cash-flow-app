@@ -193,6 +193,11 @@ function TransactionListPage() {
               onChange={(opt) => setCategory(opt)}
             />
           </div>
+          <div className="flex justify-end mt-4">
+            <Button onClick={() => navigate(`${ROUTE_TRANSACTION}/create`)}>
+              Create Transaction
+            </Button>
+          </div>
           <DataTable
             limit={10}
             columns={columns}
@@ -200,11 +205,6 @@ function TransactionListPage() {
             getParams={getParams}
             refetch={refetch}
           />
-          <div className="flex justify-end">
-            <Button onClick={() => navigate(`${ROUTE_TRANSACTION}/create`)}>
-              Create Transaction
-            </Button>
-          </div>
         </CardContent>
       </Card>
       <DeleteDialog
