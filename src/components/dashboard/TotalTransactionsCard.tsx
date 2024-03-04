@@ -13,12 +13,14 @@ function TotalTransactionsCard() {
     useState<DailySummarizeTransaction[]>();
   const [dateStart, setDateStart] = useState<Date | undefined>(() => {
     const date = new Date();
-    date.setDate(date.getDate() - 30);
-    return date;
+
+    return new Date(`${date.getFullYear()}-01-01`);
   });
 
   const [dateEnd, setDateEnd] = useState<Date | undefined>(() => {
-    return new Date();
+    const date = new Date();
+
+    return new Date(`${date.getFullYear()}-12-31`);
   });
 
   const wrappedFetchItems = useWrapInvalidToken((args) =>
@@ -32,11 +34,13 @@ function TotalTransactionsCard() {
       if (!dateStart && !dateEnd) return;
       const params: any = {};
       if (dateStart) {
-        params.dateStart = dateStart.toISOString();
+        dateStart.setHours(dateStart.getHours() - 7);
+        params.dateStart = dateStart.toISOString().slice(0, 10);
       }
 
       if (dateEnd) {
-        params.dateEnd = dateEnd.toISOString();
+        dateEnd.setHours(dateEnd.getDate() - 7);
+        params.dateEnd = dateEnd.toISOString().slice(0, 10);
       }
 
       try {
