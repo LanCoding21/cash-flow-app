@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { DatePicker, Typography } from '../common';
 import useWrapInvalidToken from '@/utils/hooks/useWrapInvalidToken';
 import clsx from 'clsx';
-import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 function TotalTransactionsCard() {
   const [transactions, setTransactions] =
@@ -16,6 +16,26 @@ function TotalTransactionsCard() {
 
     return new Date(`${date.getFullYear()}-01-01`);
   });
+
+  const incomeColors = [
+    '#050C9C',
+    '#A7D397',
+    '#FFBF00',
+    '#FF9A00',
+    '#006769',
+    '#9DDE8B',
+  ];
+
+  const expenseColors = [
+    '#C70039',
+    '#F3CA52',
+    '#F6E9B2',
+    '#FC4100',
+    '#FF6500',
+    '#FFC470',
+    '#4793AF',
+    '#FFC94A',
+  ];
 
   const [dateEnd, setDateEnd] = useState<Date | undefined>(() => {
     const date = new Date();
@@ -145,7 +165,11 @@ function TotalTransactionsCard() {
                 data={incomePieData}
                 innerRadius={65}
                 paddingAngle={6}
-              />
+              >
+                {incomePieData.map((_entry, index) => (
+                  <Cell fill={incomeColors[index]} key={index} />
+                ))}
+              </Pie>
               <Tooltip
                 formatter={(val: any) => new Intl.NumberFormat().format(val)}
               />
@@ -167,7 +191,11 @@ function TotalTransactionsCard() {
                 data={expensePieData}
                 innerRadius={65}
                 paddingAngle={6}
-              />
+              >
+                {expensePieData.map((_entry, index) => (
+                  <Cell key={index} fill={expenseColors[index]} />
+                ))}
+              </Pie>
               <Tooltip
                 formatter={(val: any) => new Intl.NumberFormat().format(val)}
               />
