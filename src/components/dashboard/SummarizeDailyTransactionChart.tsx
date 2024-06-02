@@ -1,4 +1,4 @@
-import { DatePicker } from '@/components/common';
+import { DatePicker, Dropdown } from '@/components/common';
 import TransactionService from '@/service/transaction_service';
 import { DailySummarizeTransaction } from '@/service/types/transaction_type';
 import { parseErrorMessage } from '@/utils/api';
@@ -22,12 +22,15 @@ function SummarizeDailyTransactionChart() {
     useState<DailySummarizeTransaction[]>();
   const [dateStart, setDateStart] = useState<Date | undefined>(() => {
     const date = new Date();
-    date.setDate(date.getDate() - 30);
-    return date;
+    return new Date(`${date.getFullYear()}-01-01`);
   });
 
+  const [groupBy, setGroupBy] = useState('Monthly');
+
   const [dateEnd, setDateEnd] = useState<Date | undefined>(() => {
-    return new Date();
+    const date = new Date();
+
+    return new Date(`${date.getFullYear()}-12-31`);
   });
 
   const dates = useMemo(() => {
@@ -76,7 +79,54 @@ function SummarizeDailyTransactionChart() {
     };
   }, [dateStart, dateEnd]);
 
+  const monthlyData = useMemo(() => {
+    const months = Array.from(
+      new Set(
+        dates.map((date) => {
+          const label = dateFormat(date.toISOString(), {
+            year: 'numeric',
+            month: 'short',
+          });
+          return label;
+        }),
+      ),
+    );
+
+    return months.map((mo) => {
+      const incomeTransactions: number = (transactions ?? [])
+        .filter((t: DailySummarizeTransaction) => {
+          return (
+            dateFormat(t.date.slice(0, 10), {
+              month: 'short',
+              year: 'numeric',
+            }) === mo
+          );
+        })
+        .filter((t: DailySummarizeTransaction) => t.type === 'INCOME')
+        .reduce((a, b) => a + b.amount, 0);
+
+      const expenseTransaction: number = (transactions ?? [])
+        .filter(
+          (t: DailySummarizeTransaction) =>
+            dateFormat(t.date.slice(0, 10), {
+              month: 'short',
+              year: 'numeric',
+            }) === mo,
+        )
+        .filter((t: DailySummarizeTransaction) => t.type === 'EXPENSE')
+        .reduce((a, b) => a + b.amount, 0);
+
+      return {
+        name: mo,
+        income: incomeTransactions ?? 0,
+        expense: expenseTransaction ?? 0,
+      };
+    });
+  }, [dates, transactions]);
+
   const data = useMemo(() => {
+    if (groupBy === 'Monthly') return monthlyData;
+
     const dateTransactions = dates.map((date) => {
       const incomeTransactions: number = (transactions ?? [])
         .filter((t: DailySummarizeTransaction) => {
@@ -109,7 +159,7 @@ function SummarizeDailyTransactionChart() {
     });
 
     return dateTransactions;
-  }, [dates, transactions]);
+  }, [dates, transactions, groupBy]);
 
   return (
     <Card>
@@ -129,6 +179,14 @@ function SummarizeDailyTransactionChart() {
             onDateChange={(val) => setDateEnd(val)}
             label="Date End"
             className="md:w-[250px] w-full"
+          />
+          <Dropdown
+            label="Group By"
+            options={['Monthly', 'Daily']}
+            getOptionLabel={(opt) => opt}
+            getOptionValue={(opt) => opt}
+            defaultValue={groupBy}
+            onChange={(val) => setGroupBy(val ?? 'Monthly')}
           />
         </div>
         <ResponsiveContainer height={300}>
