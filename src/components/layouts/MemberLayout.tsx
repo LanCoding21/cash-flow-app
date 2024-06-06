@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { HamburgerMenuIcon, HeartIcon } from '@radix-ui/react-icons';
+import { HeartIcon } from '@radix-ui/react-icons';
 import useAuthStore from '@/store/useAuthStore';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { ROUTE_LOGIN } from '@/config/routes';
 import MemberSidebar from '../navigation/MemberSidebar';
 import Typography from '../common/Typography';
 import Backdrop from '../common/Backdrop';
+import NavBar from '../navigation/NavBar';
 
 function MemberLayout() {
   const [open, setOpen] = useState(false);
@@ -23,14 +24,10 @@ function MemberLayout() {
     <>
       <div className="bg-gray-100 h-full w-full flex flex-col justify-between">
         <div className="flex w-full h-full" style={{ minHeight: '95vh' }}>
+          <NavBar onHamburgerMenuClick={() => setOpen(!open)} />
           <MemberSidebar open={open} />
-          <main className="lg:pl-72 w-full">
-            <div className="px-12 py-10 ">
-              <header className="block lg:hidden">
-                <button onClick={() => setOpen(!open)}>
-                  <HamburgerMenuIcon />
-                </button>
-              </header>
+          <main className="lg:pl-64 w-full pt-12">
+            <div className="px-2 md:px-10 py-10 ">
               <Outlet />
             </div>
           </main>

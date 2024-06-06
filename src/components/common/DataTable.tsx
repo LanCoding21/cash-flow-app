@@ -15,15 +15,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-
 interface IDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   fetchItems?: (...args: any) => Promise<any>;
@@ -189,67 +180,73 @@ export default function DataTable<TData, TValue>({
       </div>
 
       <div className="rounded md-border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id}>
-                {hg.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  <div className="flex justify-center items-center gap-4">
-                    <ReloadIcon className="animate-spin" /> Loading...
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : null}
-            {hasData && !loading
-              ? table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && 'selected'}
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+          <table className="w-full text-sm text-left text-gray-500">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+              {table.getHeaderGroups().map((hg) => (
+                <tr key={hg.id}>
+                  {hg.headers.map((header) => {
+                    return (
+                      <th scope="col" className="px-6 py-3" key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </th>
+                    );
+                  })}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <td
+                    colSpan={columns.length}
+                    className="px-6 py-4 font-medium text-center"
                   >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              : null}
-            {!hasData && !loading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No data available!
-                </TableCell>
-              </TableRow>
-            ) : null}
-          </TableBody>
-        </Table>
+                    <div className="flex justify-center items-center gap-4">
+                      <ReloadIcon className="animate-spin" /> Loading...
+                    </div>
+                  </td>
+                </tr>
+              ) : null}
+              {hasData && !loading
+                ? table.getRowModel().rows.map((row) => (
+                    <tr
+                      key={row.id}
+                      data-state={row.getIsSelected() && 'selected'}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className="px-6 py-4 font-medium text-left"
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                : null}
+              {!hasData && !loading ? (
+                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <td
+                    colSpan={columns.length}
+                    className="px-6 py-4 font-medium text-center"
+                  >
+                    No data available!
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
         <div className="flex items-center justify-end space-x-2 py-4">
           <div className="flex-1 text-sm text-muted-foreground">
             {data.length ? helperText : null}
