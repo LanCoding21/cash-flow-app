@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { numberFormat } from '@/utils/number';
 import { Typography } from '../common';
 import { TriangleDownIcon, TriangleUpIcon } from '@radix-ui/react-icons';
+import clsx from 'clsx';
 
 interface IStatsCardProps {
   data: DailySummarizeTransaction[];
@@ -44,7 +45,12 @@ function StatsCard(props: IStatsCardProps) {
             {title}
           </Typography>
           ({icon}
-          <span className="font-medium">{percentage.toFixed(2)}%</span>)
+          <span
+            className={clsx('font-medium', { 'text-destructive': isMinus })}
+          >
+            {percentage.toFixed(2)}%
+          </span>
+          )
         </div>
         <Typography variant="h4">{numberFormat(total)}</Typography>
       </CardContent>
